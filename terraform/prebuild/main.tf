@@ -14,7 +14,7 @@ terraform {
 }
 
 provider "aws" {
-  profile = "devops_demoapp"
+  profile = "devops_jenkins"
   region  = "ca-central-1"
 }
 

@@ -4,8 +4,10 @@ pipeline {
   stages {
     stage('Prebuild') {
       steps {
-        sh label: 'TerraformInit', script: 'terraform -chdir=./terraform/prebuild init' 
-        sh label: 'TerraformApply', script: 'terraform -chdir=./terraform/prebuild apply --auto-approve' 
+        withAWS(credentials: 'devops_jenkins') {
+          sh label: 'TerraformInit', script: 'terraform -chdir=./terraform/prebuild init' 
+          sh label: 'TerraformApply', script: 'terraform -chdir=./terraform/prebuild apply --auto-approve' 
+        }
       }
     }
     stage('Build') {
