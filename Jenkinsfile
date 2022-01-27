@@ -15,5 +15,15 @@ pipeline {
         sh 'echo SUCCESS'
       }
     }
+    stage('Destroy') {
+      input{
+        message "Do you want to destroy the application?"
+      }
+      steps {
+        withAWS(credentials: 'devops_jenkins') {
+          sh label: 'TerraformDestroy', script: 'terraform -chdir=./terraform/prebuild destroy --auto-approve' 
+        }
+      }
+    }
   }
 }
