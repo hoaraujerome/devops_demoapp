@@ -20,7 +20,7 @@ provider "aws" {
 
 ## Create ECR repository
 resource "aws_ecr_repository" "repository" {
-  name = var.project
+  name = var.backend_project_name
 
   image_scanning_configuration {
     scan_on_push = false
