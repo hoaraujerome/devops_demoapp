@@ -10,7 +10,7 @@ pipeline {
       steps {
         withAWS(credentials: 'devops_jenkins') {
           sh label: 'TerraformInit', script: 'terraform -chdir=./terraform/prebuild init' 
-          sh label: 'CreateECRRepository', script: 'terraform -chdir=./terraform/prebuild apply --auto-approve -var backend_project_name=${BACKEND_PROJECT_NAME}'
+          sh label: 'CreateECRRepository', script: 'terraform -chdir=./ci/prebuild apply --auto-approve -var backend_project_name=${BACKEND_PROJECT_NAME}'
         }
       }
     }
@@ -33,7 +33,7 @@ pipeline {
       }
       steps {
         withAWS(credentials: 'devops_jenkins') {
-          sh label: 'DeleteECRRepository', script: 'terraform -chdir=./terraform/prebuild destroy --auto-approve -var backend_project_name=${BACKEND_PROJECT_NAME}'
+          sh label: 'DeleteECRRepository', script: 'terraform -chdir=./ci/prebuild destroy --auto-approve -var backend_project_name=${BACKEND_PROJECT_NAME}'
         }
       }
     }
