@@ -9,7 +9,7 @@ pipeline {
     stage('Prebuild') {
       steps {
         withAWS(credentials: 'devops_jenkins') {
-          sh label: 'TerraformInit', script: 'terraform -chdir=./terraform/prebuild init' 
+          sh label: 'TerraformInit', script: 'terraform -chdir=./ci/prebuild init' 
           sh label: 'CreateECRRepository', script: 'terraform -chdir=./ci/prebuild apply --auto-approve -var backend_project_name=${BACKEND_PROJECT_NAME}'
         }
       }
