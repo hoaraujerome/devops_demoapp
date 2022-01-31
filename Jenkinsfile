@@ -1,18 +1,29 @@
 pipeline {
   agent any
- 
+  
+  environment {
+    BACKEND_PROJECT_NAME="node-devops_demoapp_backend"
+  }
+
   stages {
     stage('Prebuild') {
       steps {
         withAWS(credentials: 'devops_jenkins') {
-          sh label: 'CreateECRRepository', script: './ci/prebuild/create_ecr_repository.sh'
+          sh label: 'TerraformInit', script: 'terraform -chdir=./terraform/prebuild init' 
+          sh label: 'CreateECRRepository', script: 'terraform -chdir=./terraform/prebuild apply --auto-approve -var backend_project_name=${BACKEND_PROJECT_NAME}'
         }
       }
     }
     stage('Build') {
       steps {
         withAWS(credentials: 'devops_jenkins', region: 'ca-central-1') {
-          sh label: 'BuildAndPushDockerImage', script: './ci/build/build_push_docker_image.sh' 
+          script {
+            def accountId = sh(script: "aws sts get-caller-identity | grep \"Account\" | sed 's/\"Account\": \"\\(.*\\)\",/\\1/'", returnStdout: true).trim()
+            sh "docker build ./backend -t ${BACKEND_PROJECT_NAME}"
+            sh "aws ecr get-login-password | docker login --username AWS --password-stdin ${accountId}.dkr.ecr.ca-central-1.amazonaws.com"
+            sh "docker tag ${BACKEND_PROJECT_NAME}:latest ${accountId}.dkr.ecr.ca-central-1.amazonaws.com/${BACKEND_PROJECT_NAME}:latest"
+            sh "docker push ${accountId}.dkr.ecr.ca-central-1.amazonaws.com/${BACKEND_PROJECT_NAME}:latest"
+          }
         }
       }
     }
@@ -22,7 +33,7 @@ pipeline {
       }
       steps {
         withAWS(credentials: 'devops_jenkins') {
-          sh label: 'DeleteECRRepository', script: './ci/destroy/delete_ecr_repository.sh'
+          sh label: 'DeleteECRRepository', script: 'terraform -chdir=./terraform/prebuild destroy --auto-approve -var backend_project_name=${BACKEND_PROJECT_NAME}'
         }
       }
     }
