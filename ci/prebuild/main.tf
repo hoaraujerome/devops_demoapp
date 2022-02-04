@@ -19,7 +19,7 @@ provider "aws" {
 }
 
 ## Create ECR repository
-resource "aws_ecr_repository" "repository" {
+resource "aws_ecr_repository" "backend" {
   name = var.backend_project_name
 
   image_scanning_configuration {
@@ -30,4 +30,23 @@ resource "aws_ecr_repository" "repository" {
     Name      = "${var.project}"
     ManagedBy = "${var.iac_tool}"
   }
+}
+
+resource "aws_ecr_lifecycle_policy" "backend" {
+  repository = aws_ecr_repository.backend.name
+ 
+  policy = jsonencode({
+   rules = [{
+     rulePriority = 1
+     description  = "keep last 3 images"
+     action       = {
+       type = "expire"
+     }
+     selection     = {
+       tagStatus   = "any"
+       countType   = "imageCountMoreThan"
+       countNumber = 3
+     }
+   }]
+  })
 }

@@ -11,4 +11,4 @@ cd $DIR
 
 docker build . -t $DOCKER_IMAGE_NAME
 
-docker run -p 80:8080 -d $DOCKER_IMAGE_NAME
+docker run -p 8080:8080 -d $DOCKER_IMAGE_NAME

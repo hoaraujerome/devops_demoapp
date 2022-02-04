@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage('Prebuild') {
       steps {
-        withAWS(credentials: 'devops_jenkins') {
+        withAWS(credentials: 'devops_jenkins', region: 'ca-central-1') {
           sh label: 'TerraformInit', script: 'terraform -chdir=./ci/prebuild init' 
           sh label: 'CreateECRRepository', script: 'terraform -chdir=./ci/prebuild apply --auto-approve -var backend_project_name=${BACKEND_PROJECT_NAME}'
         }
@@ -23,6 +23,17 @@ pipeline {
             sh "aws ecr get-login-password | docker login --username AWS --password-stdin ${accountId}.dkr.ecr.ca-central-1.amazonaws.com"
             sh "docker tag ${BACKEND_PROJECT_NAME}:latest ${accountId}.dkr.ecr.ca-central-1.amazonaws.com/${BACKEND_PROJECT_NAME}:latest"
             sh "docker push ${accountId}.dkr.ecr.ca-central-1.amazonaws.com/${BACKEND_PROJECT_NAME}:latest"
+          }
+        }
+      }
+    }
+    stage('DeployStaging') {
+      steps {
+        withAWS(credentials: 'devops_jenkins', region: 'ca-central-1') {
+          script {
+            sh "terraform -chdir=./ci/deploy/staging init -backend-config=../backend-staging.tf"
+            def accountId = sh(script: "aws sts get-caller-identity | grep \"Account\" | sed 's/\"Account\": \"\\(.*\\)\",/\\1/'", returnStdout: true).trim()
+            sh "terraform -chdir=./ci/deploy/staging apply --auto-approve -var aws_ecr_backend_repository_url=${accountId}.dkr.ecr.ca-central-1.amazonaws.com/${BACKEND_PROJECT_NAME}"
           }
         }
       }
