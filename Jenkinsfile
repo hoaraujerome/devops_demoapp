@@ -43,7 +43,8 @@ pipeline {
         message "Do you want to destroy the application?"
       }
       steps {
-        withAWS(credentials: 'devops_jenkins') {
+        withAWS(credentials: 'devops_jenkins', region: 'ca-central-1') {
+          sh label: 'DeleteStaging', script: 'terraform -chdir=./ci/deploy/staging destroy --auto-approve'
           sh label: 'DeleteECRRepository', script: 'terraform -chdir=./ci/prebuild destroy --auto-approve -var backend_project_name=${BACKEND_PROJECT_NAME}'
         }
       }
