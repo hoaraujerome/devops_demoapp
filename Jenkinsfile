@@ -44,8 +44,11 @@ pipeline {
       }
       steps {
         withAWS(credentials: 'devops_jenkins', region: 'ca-central-1') {
-          sh label: 'DeleteStaging', script: 'terraform -chdir=./ci/deploy/staging destroy --auto-approve'
-          sh label: 'DeleteECRRepository', script: 'terraform -chdir=./ci/prebuild destroy --auto-approve -var backend_project_name=${BACKEND_PROJECT_NAME}'
+          script {
+            def accountId = sh(script: "aws sts get-caller-identity | grep \"Account\" | sed 's/\"Account\": \"\\(.*\\)\",/\\1/'", returnStdout: true).trim()
+            sh "terraform -chdir=./ci/deploy/staging destroy --auto-approve -var aws_ecr_backend_repository_url=${accountId}.dkr.ecr.ca-central-1.amazonaws.com/${BACKEND_PROJECT_NAME}"
+            sh "terraform -chdir=./ci/prebuild destroy --auto-approve -var backend_project_name=${BACKEND_PROJECT_NAME}"
+          }
         }
       }
     }
