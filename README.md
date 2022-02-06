@@ -21,8 +21,8 @@ Overview:
 See the repository [devops_cicd](https://github.com/thecloudprofessional/devops_cicd).
 
 ## Part 2: Deploy the API with Jenkins Pipeline
-![Pipeline](/misc/pipeline.png)
 Pipeline definition [here](/Jenkinsfile). 
+![Pipeline](/misc/pipeline.png)
 
 Stages:
 * Checkout source code. Tool: GIT Jenkins plugin.
