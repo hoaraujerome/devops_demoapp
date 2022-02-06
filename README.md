@@ -29,5 +29,5 @@ Stages:
 * Checkout source code. Tool: GIT Jenkins plugin.
 * Prebuild: create the ECR repository for the API. Tool: Terraform.
 * Build: build the docker image for the API and push it to the ECR repository. Tools: Docker + AWS CLI.
-* DeployStaging: build the staging environment. Tool: Terraform.
+* DeployStaging: build the staging environment for the API. Tool: Terraform.
 * Destroy (on-demand): delete the staging environment and the ECR repository. Tool: Terraform.
