@@ -22,3 +22,11 @@ See the repository [devops_cicd](https://github.com/thecloudprofessional/devops_
 
 ## Part 2: Deploy the API with Jenkins Pipeline
 ![Pipeline](/misc/pipeline.png)
+Pipeline definition [here](/Jenkinsfile). 
+
+Stages:
+* Checkout source code. Tool: GIT Jenkins plugin.
+* Prebuild: create the ECR repository for the API. Tool: Terraform.
+* Build: build the docker image for the API and push it to the ECR repository. Tools: Docker + AWS CLI.
+* DeployStaging: build the staging environment. Tool: Terraform.
+* Destroy (on-demand): delete the staging environment and the ECR repository. Tool: Terraform.
