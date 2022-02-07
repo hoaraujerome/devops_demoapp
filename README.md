@@ -20,7 +20,7 @@ Overview:
 ## Part 1: Jenkins server on AWS EC2 instance
 See the repository [devops_cicd](https://github.com/thecloudprofessional/devops_cicd).
 
-## Part 2: Deploy the API with Jenkins Pipeline
+## Part 2: Containerized API deployment with Jenkins Pipeline
 Pipeline definition [here](/Jenkinsfile). 
 
 ![Pipeline](/misc/pipeline.png)
