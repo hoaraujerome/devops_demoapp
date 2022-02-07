@@ -31,3 +31,15 @@ Stages:
 * Build: build the docker image for the API and push it to the ECR repository. Tools: Docker + AWS CLI.
 * DeployStaging: build the staging environment for the API. Tool: Terraform.
 * Destroy (on-demand): delete the staging environment and the ECR repository. Tool: Terraform.
+
+#### Prerequisites
+* S3 bucket to store the Terraform states (see "bucket" in the [prebuild configuration](/ci/prebuild/main.tf) and in the deploy [staging configuration](/ci/deploy/backend-staging.tf)).
+* AWS CLI profile named **devops_jenkins** (see "profile" in the [prebuild configuration](/ci/prebuild/main.tf) and in the deploy [staging configuration](/ci/deploy/staging/main.tf)). Permissions needed: IAM, ELB, ECR, S3, CloudWatch Logs, ECS, and VPC.
+
+#### Usage
+Push some changes in the main branch of the current repo to trigger the pipeline in Jenkins.
+
+Otherwise, you can also run a "logical copy" of the pipeline locally:
+```
+./ci/runPipelineLocally.sh
+```
