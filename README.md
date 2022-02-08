@@ -1,4 +1,4 @@
-# DEVOPS Project
+# DEVOPS Project: Jenkins As Code with CI/CD pipeline from scratch
 ## Goal
 Deploy a containerized API into a staging environment in a public cloud **automatically** whenever new commits are integrated into the main branch.
 
